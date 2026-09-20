@@ -132,7 +132,7 @@ export async function POST(request: NextRequest) {
         });
 
       case 'bridge-for-yield':
-        const { fromChainId, toChainId, userAddress, amount, signer } = body;
+        const { fromChainId, toChainId, userAddress, amount } = body;
 
         if (!fromChainId || !toChainId || !userAddress || !amount) {
           return NextResponse.json(
@@ -144,12 +144,11 @@ export async function POST(request: NextRequest) {
           );
         }
 
-        const bridgeResult = await enhancedLiFiService.bridgeUSDCWithCCTP(
+        const bridgeResult = await enhancedLiFiService.getUSDCBridgeRoute(
           fromChainId,
           toChainId,
           amount,
-          userAddress,
-          signer
+          userAddress
         );
 
         return NextResponse.json({

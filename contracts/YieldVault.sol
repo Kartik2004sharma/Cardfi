@@ -1,15 +1,19 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.19;
+pragma solidity ^0.8.20;
+
+// NOTE: YieldVault is a legacy contract kept for reference only.
+// The active vault used in production is StrategyVault.sol.
+// YieldVault.sol will be consolidated into StrategyVault.sol in a future cleanup.
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/utils/Pausable.sol";
 
 /**
  * @title YieldVault
- * @dev A vault contract for automated USDC yield strategies
+ * @dev Legacy vault — use StrategyVault for new deployments.
  */
 contract YieldVault is ReentrancyGuard, Ownable, Pausable {
     using SafeERC20 for IERC20;
@@ -44,7 +48,7 @@ contract YieldVault is ReentrancyGuard, Ownable, Pausable {
         address _asset,
         address _strategy,
         string memory _name
-    ) {
+    ) Ownable(msg.sender) {
         asset = IERC20(_asset);
         strategy = _strategy;
         lastHarvest = block.timestamp;
@@ -78,7 +82,7 @@ contract YieldVault is ReentrancyGuard, Ownable, Pausable {
     /**
      * @dev Withdraw USDC from vault
      */
-    function withdraw(uint256 shares) external nonReentrant {
+    function withdraw(uint256 shares) public nonReentrant {
         require(shares > 0, "Cannot withdraw 0 shares");
         require(userShares[msg.sender] >= shares, "Insufficient shares");
         

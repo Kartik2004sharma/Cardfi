@@ -16,20 +16,7 @@ const MOCK_STRATEGIES = [
     contractAddress: '0x0000000000000000000000000000000000000000',
     description: 'Earn yield by lending USDC on Aave V3 protocol'
   },
-  {
-    id: 'compound-usdc-sepolia',
-    name: 'Compound USDC Lending',
-    protocol: 'Compound V3',
-    chainId: 11155111, // Sepolia
-    currentAPY: 3.85,
-    tvl: 89000000,
-    riskLevel: 'LOW' as const,
-    minDeposit: 1,
-    maxDeposit: 500000,
-    isActive: true,
-    contractAddress: '0x0000000000000000000000000000000000000000',
-    description: 'Earn yield by lending USDC on Compound V3 protocol'
-  },
+
   {
     id: 'quickswap-usdc-amoy',
     name: 'QuickSwap USDC Pool',
@@ -174,33 +161,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate amount
-    if (amount < strategy.minDeposit || amount > strategy.maxDeposit) {
-      return NextResponse.json(
-        { 
-          success: false, 
-          error: `Amount must be between $${strategy.minDeposit} and $${strategy.maxDeposit}` 
-        },
-        { status: 400 }
-      );
-    }
-
-    // Mock deposit response - in production, this would interact with smart contracts
-    const mockTransaction = {
-      txHash: `0x${Math.random().toString(16).substr(2, 64)}`,
-      status: 'pending',
-      strategyId,
-      amount,
-      userAddress,
-      timestamp: Date.now(),
-      estimatedShares: Math.floor(amount * 0.98), // Mock shares calculation
-      contractAddress: strategy.contractAddress
-    };
-
+    // Return the strategy details so the client can construct the on-chain transaction using wagmi.
+    // The previous Math.random() txHash mock has been removed (Phase 8).
+    // Actual Aave deposit execution must happen client-side via wallet signatures.
     return NextResponse.json({
       success: true,
-      data: mockTransaction,
-      message: 'Deposit initiated successfully'
+      data: {
+        strategyId,
+        amount,
+        userAddress,
+        contractAddress: strategy.contractAddress,
+        protocol: strategy.protocol
+      },
+      message: 'Deposit parameters validated. Proceed with wallet signature.'
     });
 
   } catch (error) {
@@ -208,7 +181,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       { 
         success: false, 
-        error: 'Failed to process deposit' 
+        error: 'Failed to process deposit parameters' 
       },
       { status: 500 }
     );

@@ -20,9 +20,9 @@ const plans = [
     cta: "Get Started Free",
     popular: false,
     icon: Star,
-    gradient: "from-gray-500/20 to-gray-600/20",
-    border: "border-gray-600/30",
-    ctaStyle: "bg-white/10 hover:bg-white/20 text-white border border-white/30"
+    gradient: "from-white/5 to-white/5",
+    border: "border-white/10",
+    ctaStyle: "bg-transparent hover:bg-white/10 text-white border border-white/20"
   },
   {
     name: "Pro",
@@ -38,9 +38,9 @@ const plans = [
     cta: "Start Pro Trial",
     popular: true,
     icon: Zap,
-    gradient: "from-purple-500/20 to-blue-500/20",
-    border: "border-purple-500/30",
-    ctaStyle: "bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white"
+    gradient: "from-white/10 to-white/5",
+    border: "border-white/30",
+    ctaStyle: "bg-white hover:bg-gray-200 text-black border border-white"
   },
   {
     name: "Enterprise",
@@ -56,15 +56,15 @@ const plans = [
     cta: "Contact Sales",
     popular: false,
     icon: Check,
-    gradient: "from-green-500/20 to-emerald-500/20",
-    border: "border-green-500/30",
-    ctaStyle: "bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white"
+    gradient: "from-white/5 to-white/5",
+    border: "border-white/10",
+    ctaStyle: "bg-transparent hover:bg-white/10 text-white border border-white/20"
   }
 ]
 
 export function PricingPlans() {
   return (
-    <section id="pricing" className="py-20 bg-gradient-to-br from-gray-900 to-black">
+    <section id="pricing" className="py-20 bg-black">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-white mb-4">
@@ -79,11 +79,11 @@ export function PricingPlans() {
           {plans.map((plan, index) => (
             <Card 
               key={index} 
-              className={`relative bg-gradient-to-br ${plan.gradient} backdrop-blur-sm border ${plan.border} ${plan.popular ? 'ring-2 ring-purple-500/50 scale-105' : ''} transition-all duration-300 hover:scale-105`}
+              className={`relative bg-gradient-to-br ${plan.gradient} backdrop-blur-sm border ${plan.border} ${plan.popular ? 'ring-2 ring-white/50 scale-105' : ''} transition-all duration-300 hover:scale-105`}
             >
               {plan.popular && (
                 <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                  <Badge className="bg-gradient-to-r from-purple-500 to-blue-500 text-white px-4 py-1">
+                  <Badge className="bg-white text-black font-semibold px-4 py-1">
                     Most Popular
                   </Badge>
                 </div>
@@ -107,7 +107,7 @@ export function PricingPlans() {
                   )}
                 </div>
                 
-                <p className="text-purple-400 font-medium mb-2">{plan.subtitle}</p>
+                <p className="text-gray-300 font-medium mb-2">{plan.subtitle}</p>
                 <p className="text-gray-400 text-sm">{plan.description}</p>
               </CardHeader>
               
@@ -115,7 +115,7 @@ export function PricingPlans() {
                 <ul className="space-y-3 mb-8">
                   {plan.features.map((feature, featureIndex) => (
                     <li key={featureIndex} className="flex items-center gap-3">
-                      <Check className="w-5 h-5 text-green-400 flex-shrink-0" />
+                      <Check className="w-5 h-5 text-white flex-shrink-0" />
                       <span className="text-gray-300">{feature}</span>
                     </li>
                   ))}

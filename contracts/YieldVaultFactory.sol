@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.19;
+pragma solidity ^0.8.20;
 
 import "./YieldVault.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -42,7 +42,7 @@ contract YieldVaultFactory is Ownable {
         minWithdraw: 1e6     // 1 USDC
     });
 
-    constructor() {}
+    constructor() Ownable(msg.sender) {}
 
     /**
      * @dev Create a new yield vault

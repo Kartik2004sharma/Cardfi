@@ -220,9 +220,9 @@ export function MetaMaskCardDashboard() {
               <Button 
                 onClick={() => createYieldDelegation('0x1234567890123456789012345678901234567890')}
                 disabled={isLoading}
-                className="w-full"
+                className="w-full bg-blue-600 hover:bg-blue-700"
               >
-                {isLoading ? 'Setting up...' : 'Enable Automated Yield Management'}
+                {isLoading ? 'Setting up...' : '⚡ Auto-Invest Now (v1)'}
               </Button>
             )}
           </CardContent>
@@ -235,7 +235,7 @@ export function MetaMaskCardDashboard() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Clock className="w-5 h-5" />
-              Recent Card Activity
+              Recent Card Activity <Badge variant="outline" className="ml-2 text-xs">Sample Data</Badge>
             </CardTitle>
             <CardDescription>
               Your latest MetaMask Card transactions

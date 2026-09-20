@@ -18,12 +18,21 @@ contract StrategyVault is ERC20, ReentrancyGuard, Ownable {
     // State variables
     IERC20 public immutable asset; // USDC token
     address public strategy; // Address of the strategy contract
-    
+
     uint256 public totalAssets; // Total USDC managed by this vault
     uint256 public performanceFee; // Performance fee in basis points (100 = 1%)
     uint256 public managementFee; // Management fee in basis points (100 = 1%)
     uint256 public lastFeeCollection; // Timestamp of last fee collection
-    
+
+    // APY tracking — updated by the strategy via reportAPY(); not a constant.
+    // Stored in basis points (e.g. 850 = 8.5%). Defaults to 0 until first report.
+    uint256 public reportedAPY;
+
+    // Emergency withdraw timelock: owner must call initiateEmergencyWithdraw() first,
+    // then wait EMERGENCY_TIMELOCK seconds before calling emergencyWithdraw().
+    uint256 public emergencyWithdrawRequestedAt;
+    uint256 public constant EMERGENCY_TIMELOCK = 2 days;
+
     uint256 public constant MAX_FEE = 2000; // 20% max fee
     uint256 public constant BASIS_POINTS = 10000;
     uint256 public constant SECONDS_PER_YEAR = 365 * 24 * 60 * 60;
@@ -34,6 +43,8 @@ contract StrategyVault is ERC20, ReentrancyGuard, Ownable {
     event StrategyUpdated(address indexed oldStrategy, address indexed newStrategy);
     event FeesUpdated(uint256 performanceFee, uint256 managementFee);
     event FeesCollected(uint256 performanceFees, uint256 managementFees);
+    event APYReported(uint256 apyBasisPoints);
+    event EmergencyWithdrawInitiated(uint256 executeAfter);
 
     modifier onlyStrategy() {
         require(msg.sender == strategy, "Only strategy can call");
@@ -142,26 +153,31 @@ contract StrategyVault is ERC20, ReentrancyGuard, Ownable {
     }
 
     // Strategy functions
-    function harvest() external onlyStrategy returns (uint256 profit) {
-        uint256 balanceBefore = asset.balanceOf(address(this));
-        
-        // Strategy would call this after executing yield farming operations
-        // and transferring profits back to the vault
-        
-        uint256 balanceAfter = asset.balanceOf(address(this));
-        profit = balanceAfter - balanceBefore;
-        
-        if (profit > 0) {
-            // Collect performance fees
-            uint256 fees = (profit * performanceFee) / BASIS_POINTS;
-            if (fees > 0) {
-                asset.safeTransfer(owner(), fees);
-                profit -= fees;
-                emit FeesCollected(fees, 0);
-            }
-            
-            totalAssets += profit;
+    //
+    // harvest() is called by the strategy AFTER it has already transferred
+    // profit tokens into this vault. The strategy reports the gross profit
+    // amount; we take performance fees and update totalAssets accordingly.
+    //
+    // BUG FIX: The previous version read balanceBefore then balanceAfter with
+    // no action between them, so profit was always 0. Fixed by accepting the
+    // reported profit as a parameter and verifying the balance actually grew.
+    function harvest(uint256 _reportedProfit) external onlyStrategy returns (uint256 profit) {
+        require(_reportedProfit > 0, "No profit to harvest");
+
+        // Verify the strategy actually transferred the reported amount in.
+        // Prevents the strategy from reporting profit it didn't deliver.
+        uint256 actualBalance = asset.balanceOf(address(this));
+        require(actualBalance >= totalAssets + _reportedProfit, "Reported profit not in vault");
+
+        // Collect performance fees
+        uint256 fees = (_reportedProfit * performanceFee) / BASIS_POINTS;
+        if (fees > 0) {
+            asset.safeTransfer(owner(), fees);
+            emit FeesCollected(fees, 0);
         }
+
+        profit = _reportedProfit - fees;
+        totalAssets += profit;
     }
 
     function reportLoss(uint256 _loss) external onlyStrategy {
@@ -218,9 +234,32 @@ contract StrategyVault is ERC20, ReentrancyGuard, Ownable {
     }
 
     function emergencyWithdraw() external onlyOwner {
+        // Two-step timelock: initiateEmergencyWithdraw() must be called first.
+        // This gives depositors time to exit before the owner can drain the vault.
+        require(emergencyWithdrawRequestedAt != 0, "Must initiate first");
+        require(
+            block.timestamp >= emergencyWithdrawRequestedAt + EMERGENCY_TIMELOCK,
+            "Timelock not elapsed"
+        );
+
+        emergencyWithdrawRequestedAt = 0; // Reset so it can't be replayed
+
         uint256 balance = asset.balanceOf(address(this));
         asset.safeTransfer(owner(), balance);
         totalAssets = 0;
+    }
+
+    // Step 1 of emergency withdraw: signals intent and starts the 2-day clock.
+    function initiateEmergencyWithdraw() external onlyOwner {
+        require(emergencyWithdrawRequestedAt == 0, "Already initiated");
+        emergencyWithdrawRequestedAt = block.timestamp;
+        emit EmergencyWithdrawInitiated(block.timestamp + EMERGENCY_TIMELOCK);
+    }
+
+    // Cancel a pending emergency withdraw (e.g., false alarm).
+    function cancelEmergencyWithdraw() external onlyOwner {
+        require(emergencyWithdrawRequestedAt != 0, "Not initiated");
+        emergencyWithdrawRequestedAt = 0;
     }
 
     // View functions
@@ -263,17 +302,20 @@ contract StrategyVault is ERC20, ReentrancyGuard, Ownable {
         return balanceOf(_owner);
     }
 
-    // APY calculation
+    // APY is reported by the strategy after each harvest cycle.
+    // Strategy calls reportAPY(apyInBasisPoints) — e.g. 850 for 8.5%.
+    // BUG FIX: The old implementation returned a hardcoded constant 1200 forever.
+    function reportAPY(uint256 _apyBasisPoints) external onlyStrategy {
+        reportedAPY = _apyBasisPoints;
+        emit APYReported(_apyBasisPoints);
+    }
+
     function getCurrentAPY() external view returns (uint256) {
-        // This would typically integrate with external price feeds or oracles
-        // to calculate the current APY based on recent performance
-        
-        // Simplified calculation - in production this would be more sophisticated
-        uint256 timePassed = block.timestamp - lastFeeCollection;
-        if (timePassed == 0 || totalSupply() == 0) return 0;
-        
-        // Mock APY calculation - replace with real yield data
-        return 1200; // 12% APY in basis points
+        // Returns the APY last reported by the strategy, in basis points.
+        // Returns 0 if the strategy has never called reportAPY() yet.
+        // NOTE: This is NOT a real-time on-chain computation — it is as fresh
+        // as the last time the strategy called reportAPY().
+        return reportedAPY;
     }
 
     function getShareValue() external view returns (uint256) {
@@ -291,7 +333,7 @@ contract StrategyVault is ERC20, ReentrancyGuard, Ownable {
         _totalAssets = totalAssets;
         _totalSupply = totalSupply();
         _sharePrice = _totalSupply > 0 ? convertToAssets(1e18) : 1e18;
-        _currentAPY = this.getCurrentAPY();
+        _currentAPY = reportedAPY; // No external call needed
         _performanceFee = performanceFee;
         _managementFee = managementFee;
     }

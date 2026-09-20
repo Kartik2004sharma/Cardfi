@@ -7,7 +7,9 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  swcMinify: true,
+  experimental: {
+    optimizePackageImports: ['lucide-react', '@rainbow-me/rainbowkit'],
+  },
 };
 
 export default nextConfig;

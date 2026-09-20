@@ -22,6 +22,11 @@ interface ICompoundCToken {
 contract YieldManager is ReentrancyGuard, Ownable {
     using SafeERC20 for IERC20;
 
+    // Protocol type enum — eliminates the fragile string-based keccak routing.
+    // BUG FIX: The old _executeDeposit() used keccak256(name) comparison which
+    // silently does nothing if the name doesn't exactly match "Aave"/"Compound".
+    enum Protocol { NONE, AAVE, COMPOUND }
+
     struct Strategy {
         string name;
         address protocol;
@@ -30,6 +35,7 @@ contract YieldManager is ReentrancyGuard, Ownable {
         uint256 tvl;
         bool isActive;
         uint256 riskLevel; // 1 = LOW, 2 = MEDIUM, 3 = HIGH
+        Protocol protocolType; // Added — replaces string-based routing
     }
 
     struct Position {
@@ -54,11 +60,16 @@ contract YieldManager is ReentrancyGuard, Ownable {
     mapping(string => Strategy) public strategies;
     mapping(address => Position[]) public userPositions;
     mapping(address => RebalanceConfig) public userConfigs;
-    
+
+    // Keepers: addresses authorised to call autoRebalance on behalf of users.
+    // BUG FIX: autoRebalance() previously had no access control — anyone could
+    // call it and force a user's positions to rebalance at any time.
+    mapping(address => bool) public keepers;
+
     string[] public strategyIds;
     uint256 public totalValueLocked;
     uint256 public constant BASIS_POINTS = 10000;
-    
+
     // Events
     event Deposit(address indexed user, string strategyId, uint256 amount, uint256 shares);
     event Withdraw(address indexed user, string strategyId, uint256 amount, uint256 shares);
@@ -67,9 +78,20 @@ contract YieldManager is ReentrancyGuard, Ownable {
     event StrategyUpdated(string strategyId, uint256 newAPY);
     event EmergencyExit(address indexed user, uint256 totalAmount);
     event ConfigUpdated(address indexed user, RebalanceConfig config);
+    event KeeperUpdated(address keeper, bool enabled);
+
+    modifier onlyKeeper() {
+        require(keepers[msg.sender] || msg.sender == owner(), "Not a keeper");
+        _;
+    }
 
     constructor(address _usdc) Ownable(msg.sender) {
         USDC = IERC20(_usdc);
+    }
+
+    function setKeeper(address _keeper, bool _enabled) external onlyOwner {
+        keepers[_keeper] = _enabled;
+        emit KeeperUpdated(_keeper, _enabled);
     }
 
     // Strategy management
@@ -79,10 +101,12 @@ contract YieldManager is ReentrancyGuard, Ownable {
         address _protocol,
         address _token,
         uint256 _currentAPY,
-        uint256 _riskLevel
+        uint256 _riskLevel,
+        Protocol _protocolType
     ) external onlyOwner {
         require(bytes(strategies[_strategyId].name).length == 0, "Strategy already exists");
-        
+        require(_protocolType != Protocol.NONE, "Protocol type must be specified");
+
         strategies[_strategyId] = Strategy({
             name: _name,
             protocol: _protocol,
@@ -90,9 +114,10 @@ contract YieldManager is ReentrancyGuard, Ownable {
             currentAPY: _currentAPY,
             tvl: 0,
             isActive: true,
-            riskLevel: _riskLevel
+            riskLevel: _riskLevel,
+            protocolType: _protocolType
         });
-        
+
         strategyIds.push(_strategyId);
         emit StrategyAdded(_strategyId, _name, _protocol);
     }
@@ -183,7 +208,9 @@ contract YieldManager is ReentrancyGuard, Ownable {
         emit Withdraw(msg.sender, position.strategyId, _amount, sharesToRedeem);
     }
 
-    function autoRebalance(address _user) external {
+    // BUG FIX: autoRebalance previously had no access control — any address could
+    // call it and force a user's positions to rebalance. Now gated to keepers.
+    function autoRebalance(address _user) external onlyKeeper {
         RebalanceConfig memory config = userConfigs[_user];
         require(config.rebalanceFrequency > 0, "Auto-rebalance not configured");
         
@@ -245,47 +272,54 @@ contract YieldManager is ReentrancyGuard, Ownable {
     }
 
     // Internal functions
+    //
+    // BUG FIX: The old implementation used keccak256(strategy.name) string comparison,
+    // which silently does nothing if the name is not exactly "Aave" or "Compound".
+    // Now uses the Protocol enum set at strategy registration time — much safer.
     function _executeDeposit(string memory _strategyId, uint256 _amount) internal {
         Strategy memory strategy = strategies[_strategyId];
-        
-        // Approve token spending
-        USDC.forceApprove(strategy.protocol, _amount);
-        
-        // Deposit to protocol (simplified - would need specific protocol logic)
-        if (keccak256(bytes(strategy.name)) == keccak256(bytes("Aave"))) {
+
+        if (strategy.protocolType == Protocol.AAVE) {
+            USDC.forceApprove(strategy.protocol, _amount);
             IAavePool(strategy.protocol).supply(address(USDC), _amount, address(this), 0);
-        } else if (keccak256(bytes(strategy.name)) == keccak256(bytes("Compound"))) {
-            ICompoundCToken(strategy.protocol).mint(_amount);
+        } else if (strategy.protocolType == Protocol.COMPOUND) {
+            USDC.forceApprove(strategy.protocol, _amount);
+            uint256 err = ICompoundCToken(strategy.protocol).mint(_amount);
+            require(err == 0, "Compound: mint failed");
+        } else {
+            revert("Unknown protocol type");
         }
     }
 
     function _executeWithdraw(string memory _strategyId, uint256 _amount) internal returns (uint256) {
         Strategy memory strategy = strategies[_strategyId];
-        
-        // Withdraw from protocol
-        if (keccak256(bytes(strategy.name)) == keccak256(bytes("Aave"))) {
+
+        if (strategy.protocolType == Protocol.AAVE) {
             return IAavePool(strategy.protocol).withdraw(address(USDC), _amount, address(this));
-        } else if (keccak256(bytes(strategy.name)) == keccak256(bytes("Compound"))) {
-            ICompoundCToken(strategy.protocol).redeem(_amount);
-            return _amount; // Simplified
+        } else if (strategy.protocolType == Protocol.COMPOUND) {
+            // Compound's redeem() returns an error code, not an amount.
+            // The redeemed USDC lands in this contract; return _amount as the received value.
+            uint256 err = ICompoundCToken(strategy.protocol).redeem(_amount);
+            require(err == 0, "Compound: redeem failed");
+            return _amount;
+        } else {
+            revert("Unknown protocol type");
         }
-        
-        return _amount;
     }
 
     function _executeRebalance(address _user, uint256 _fromPositionIndex, string memory _toStrategyId, uint256 _amount) internal {
         Position storage fromPosition = userPositions[_user][_fromPositionIndex];
-        
+
         // Withdraw from old strategy
         uint256 withdrawnAmount = _executeWithdraw(fromPosition.strategyId, _amount);
-        
+
         // Deposit to new strategy
         _executeDeposit(_toStrategyId, withdrawnAmount);
-        
+
         // Update positions
         fromPosition.amount -= _amount;
         fromPosition.lastRebalance = block.timestamp;
-        
+
         userPositions[_user].push(Position({
             strategyId: _toStrategyId,
             user: _user,
@@ -294,22 +328,28 @@ contract YieldManager is ReentrancyGuard, Ownable {
             entryTime: block.timestamp,
             lastRebalance: block.timestamp
         }));
-        
+
         emit Rebalance(_user, fromPosition.strategyId, _toStrategyId, withdrawnAmount);
     }
 
-    function _getBestStrategy(uint256 _minAmount) internal view returns (string memory) {
+    // BUG FIX: The old version returned an empty string "" if no strategy
+    // was found, which caused a confusing "Strategy not active" revert downstream.
+    // Now reverts explicitly with a clear message.
+    function _getBestStrategy(uint256 /*_minAmount*/) internal view returns (string memory) {
         string memory bestStrategy;
         uint256 bestAPY = 0;
-        
+        bool found = false;
+
         for (uint256 i = 0; i < strategyIds.length; i++) {
             Strategy memory strategy = strategies[strategyIds[i]];
             if (strategy.isActive && strategy.currentAPY > bestAPY) {
                 bestAPY = strategy.currentAPY;
                 bestStrategy = strategyIds[i];
+                found = true;
             }
         }
-        
+
+        require(found, "No active strategies available");
         return bestStrategy;
     }
 

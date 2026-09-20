@@ -156,18 +156,18 @@ export function HeroSection() {
                                 />
                                 <div className="inset-shadow-2xs ring-background dark:inset-shadow-white/20 bg-background relative mx-auto max-w-6xl overflow-hidden rounded-2xl border p-4 shadow-lg shadow-zinc-950/15 ring-1">
                                     <img
-                                        className="bg-background aspect-15/8 relative hidden rounded-2xl dark:block"
+                                        className="bg-background aspect-video object-contain relative hidden rounded-2xl dark:block w-full h-auto border border-white/10"
                                         src="./hero.png"
-                                        alt="IntelliAI dashboard screen"
-                                        width="2700"
-                                        height="1440"
+                                        alt="CardFi dashboard screen"
+                                        width="1024"
+                                        height="576"
                                     />
                                     <img
-                                        className="z-2 border-border/25 aspect-15/8 relative rounded-2xl border dark:hidden"
+                                        className="z-2 border-border/25 aspect-video object-contain relative rounded-2xl border dark:hidden w-full h-auto"
                                         src="./hero.png"
-                                        alt="IntelliAI dashboard screen"
-                                        width="2700"
-                                        height="1440"
+                                        alt="CardFi dashboard screen"
+                                        width="1024"
+                                        height="576"
                                     />
                                 </div>
                             </div>
@@ -188,7 +188,7 @@ export function HeroSection() {
                         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
                             {/* Feature 1 */}
                             <div className="group rounded-xl border p-6 hover:border-primary/50">
-                                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-white text-black">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide">
                                         <path d="M12 2v6m6.4-7a9 9 0 1 1-12.77.04l-.4-.47"/>
                                         <circle cx="12" cy="12" r="3"/>
@@ -200,7 +200,7 @@ export function HeroSection() {
                             
                             {/* Feature 2 */}
                             <div className="group rounded-xl border p-6 hover:border-primary/50">
-                                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-white text-black">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide">
                                         <rect width="20" height="14" x="2" y="5" rx="2"/>
                                         <path d="M2 10h20"/>

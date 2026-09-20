@@ -113,7 +113,7 @@ contract MockStrategyVault is ERC20, ReentrancyGuard, Ownable {
                 _totalAssets += actualYield;
                 
                 // Randomly vary APY between 8% and 15% for demo
-                uint256 randomFactor = uint256(keccak256(abi.encodePacked(block.timestamp, block.difficulty))) % 700;
+                uint256 randomFactor = uint256(keccak256(abi.encodePacked(block.timestamp, block.prevrandao))) % 700;
                 currentAPY = 800 + randomFactor; // 8% to 15%
                 
                 emit YieldGenerated(actualYield, currentAPY);

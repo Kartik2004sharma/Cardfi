@@ -22,8 +22,8 @@ export function useVaultInfo() {
 
   return {
     totalAssets: vaultInfo ? formatUnits(vaultInfo[0], 6) : '0', // USDC has 6 decimals
-    totalSupply: vaultInfo ? formatUnits(vaultInfo[1], 18) : '0',
-    sharePrice: vaultInfo ? formatUnits(vaultInfo[2], 18) : '1',
+    totalSupply: vaultInfo ? formatUnits(vaultInfo[1], 6) : '0',
+    sharePrice: vaultInfo ? formatUnits(vaultInfo[2], 6) : '1',
     currentAPY: vaultInfo ? Number(vaultInfo[3]) / 100 : 0, // Convert from basis points to percentage
     performanceFee: vaultInfo ? Number(vaultInfo[4]) / 100 : 0,
     managementFee: vaultInfo ? Number(vaultInfo[5]) / 100 : 0,
@@ -50,7 +50,7 @@ export function useUserVaultBalance() {
   });
 
   return {
-    balance: balance ? formatUnits(balance, 18) : '0',
+    balance: balance ? formatUnits(balance, 6) : '0', // StrategyVault shares are 1:1 with USDC initially, so 6 decimals
     isLoading,
     refetch,
   };

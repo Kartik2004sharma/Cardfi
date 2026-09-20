@@ -9,8 +9,10 @@ export function useDemoVaultData() {
   const usdcBalance = useUSDCBalance();
   const [demoDeposits, setDemoDeposits] = useState<number>(0);
 
-  // Check if we're on a testnet and contracts aren't deployed
-  const isTestnetDemo = chainId === 11155111 || chainId === 80001; // Sepolia or Mumbai
+  // Check if we're on a testnet and contracts aren't deployed, AND demo mode is explicitly enabled
+  const isTestnetDemo = 
+    process.env.NEXT_PUBLIC_DEMO_MODE === 'true' && 
+    (chainId === 11155111 || chainId === 80001); // Sepolia or Mumbai
   
   // Load demo deposits from localStorage
   useEffect(() => {

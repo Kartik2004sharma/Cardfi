@@ -56,12 +56,13 @@ class CircleService {
   private demoMode: boolean;
 
   constructor() {
-    this.apiKey = process.env.CIRCLE_API_KEY || process.env.NEXT_PUBLIC_CIRCLE_API_KEY || '';
+    // SECURITY: CIRCLE_API_KEY must never be a NEXT_PUBLIC_ var — that would
+    // ship it to the browser. Circle is always called server-side only.
+    this.apiKey = process.env.CIRCLE_API_KEY || '';
     this.baseUrl = process.env.CIRCLE_API_URL || 'https://api.circle.com/v1';
     this.isTestnet = process.env.CIRCLE_ENVIRONMENT === 'sandbox';
     this.demoMode = !this.apiKey || this.apiKey === 'your_circle_api_key_here';
-    
-    // Use sandbox URL for testing
+
     if (this.isTestnet) {
       this.baseUrl = 'https://api-sandbox.circle.com/v1';
     }
@@ -285,54 +286,36 @@ class CircleService {
     }
   }
 
-  // Advanced Circle features for CardFi integration
+  // -----------------------------------------------------------------------
+  // NOT IMPLEMENTED — Circle card top-up API is not public.
+  //
+  // autoTopUpCard() previously called ${baseUrl}/cards/${cardId}/topup which
+  // does not exist in Circle's public API. Keeping the method signature so
+  // callers don't break, but it now throws immediately with a clear message
+  // instead of making a doomed network call.
+  //
+  // When the Circle Card API becomes available, implement it here.
+  // -----------------------------------------------------------------------
   async autoTopUpCard(
-    walletId: string,
-    cardId: string,
-    amount: string,
-    threshold: string
-  ): Promise<any> {
-    try {
-      // This would integrate with Circle's card top-up API
-      // For now, simulate the structure
-      const response = await axios.post(
-        `${this.baseUrl}/cards/${cardId}/topup`,
-        {
-          walletId,
-          amount,
-          threshold,
-          autoTopUp: true
-        },
-        { headers: this.getHeaders() }
-      );
-
-      return response.data.data;
-    } catch (error: any) {
-      console.error('Error setting up auto top-up:', error?.response?.data || error);
-      throw new Error('Failed to set up auto top-up');
-    }
+    _walletId: string,
+    _cardId: string,
+    _amount: string,
+    _threshold: string
+  ): Promise<never> {
+    throw new Error(
+      'autoTopUpCard: Circle Card API is not yet publicly available. ' +
+      'This feature is planned for a future release.'
+    );
   }
 
-  async getCardSpendingActivity(cardId: string): Promise<any[]> {
-    try {
-      // This would integrate with Circle's card activity API
-      const response = await axios.get(
-        `${this.baseUrl}/cards/${cardId}/transactions`,
-        { 
-          headers: this.getHeaders(),
-          params: {
-            pageSize: 100,
-            orderBy: 'createDate',
-            direction: 'desc'
-          }
-        }
-      );
-
-      return response.data.data.transactions || [];
-    } catch (error: any) {
-      console.error('Error fetching card activity:', error?.response?.data || error);
-      return [];
-    }
+  // NOT IMPLEMENTED — same reason as autoTopUpCard above.
+  // ${baseUrl}/cards/${cardId}/transactions is not a real Circle endpoint.
+  // Card spending data must come from MetaMask Card API (also not yet public).
+  async getCardSpendingActivity(_cardId: string): Promise<never> {
+    throw new Error(
+      'getCardSpendingActivity: Circle Card API is not yet publicly available. ' +
+      'This feature is planned for a future release.'
+    );
   }
 
   async createProgrammableWallet(

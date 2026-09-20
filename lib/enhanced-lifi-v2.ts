@@ -167,34 +167,6 @@ class EnhancedLiFiService {
     }
   }
 
-  async executeRoute(
-    route: LiFiRoute,
-    signer: any
-  ): Promise<{
-    txHash: string;
-    status: 'PENDING' | 'DONE' | 'FAILED';
-  }> {
-    await this.initialize();
-
-    try {
-      // Use the route's transaction data to execute via the provided signer
-      const firstStep = route.steps[0];
-      if (!firstStep || !firstStep.transactionRequest) {
-        throw new Error('Invalid route or missing transaction data');
-      }
-
-      const tx = await signer.sendTransaction(firstStep.transactionRequest);
-      await tx.wait();
-      
-      return {
-        txHash: tx.hash,
-        status: 'PENDING',
-      };
-    } catch (error) {
-      console.error('Error executing route:', error);
-      throw new Error('Failed to execute cross-chain transaction');
-    }
-  }
 
   async getRouteStatus(
     txHash: string,
@@ -235,11 +207,20 @@ class EnhancedLiFiService {
     userAddress: string
   ): Promise<CCTPRoute[]> {
     try {
+      const [fromUSDC, toUSDC] = await Promise.all([
+        this.getUSDCToken(fromChainId),
+        this.getUSDCToken(toChainId),
+      ]);
+
+      if (!fromUSDC || !toUSDC) {
+        throw new Error('USDC not available on one or both chains');
+      }
+
       const routes = await this.getRoutes({
         fromChain: fromChainId,
         toChain: toChainId,
-        fromToken: '0xa0b86a33e6ba4f0f22df93e6b93d465add3b0c98', // USDC placeholder
-        toToken: '0xa0b86a33e6ba4f0f22df93e6b93d465add3b0c98', // USDC placeholder
+        fromToken: fromUSDC.address,
+        toToken: toUSDC.address,
         fromAmount: amount,
         fromAddress: userAddress,
         toAddress: userAddress,
@@ -338,14 +319,14 @@ class EnhancedLiFiService {
     }
   }
 
-  async bridgeUSDCWithCCTP(
+  // renamed from bridgeUSDCWithCCTP, no longer attempts execution server-side
+  async getUSDCBridgeRoute(
     fromChainId: number,
     toChainId: number,
     amount: string,
-    userAddress: string,
-    signer: any
+    userAddress: string
   ): Promise<{
-    txHash: string;
+    route: LiFiRoute;
     routeId: string;
     estimatedArrival: number;
     usesCCTP: boolean;
@@ -371,10 +352,8 @@ class EnhancedLiFiService {
         console.warn('Route does not use CCTP, falling back to alternative bridge');
       }
 
-      const execution = await this.executeRoute(route, signer);
-
       return {
-        txHash: execution.txHash,
+        route, // Return the raw route so the client can execute it!
         routeId: route.id,
         estimatedArrival: Date.now() + (route.steps.reduce((total, step) => 
           total + (step.estimate.executionDuration || 0), 0
@@ -382,8 +361,8 @@ class EnhancedLiFiService {
         usesCCTP,
       };
     } catch (error) {
-      console.error('Error bridging USDC:', error);
-      throw new Error('Failed to bridge USDC');
+      console.error('Error fetching USDC route:', error);
+      throw new Error('Failed to fetch USDC route');
     }
   }
 

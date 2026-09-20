@@ -1,11 +1,37 @@
+if (typeof window === "undefined") {
+  // Robust SSR polyfills for Wagmi/WalletConnect
+  const mockStorage = {
+    getItem: () => null,
+    setItem: () => {},
+    removeItem: () => {},
+    clear: () => {},
+    key: () => null,
+    length: 0
+  };
+  
+  (globalThis as any).localStorage = mockStorage;
+  (globalThis as any).sessionStorage = mockStorage;
+  
+  (globalThis as any).indexedDB = {
+    open: () => ({
+      onupgradeneeded: null,
+      onsuccess: null,
+      onerror: null,
+      addEventListener: () => {},
+      removeEventListener: () => {}
+    }),
+    deleteDatabase: () => ({})
+  };
+}
+
 import { getDefaultConfig } from '@rainbow-me/rainbowkit';
-import { mainnet, polygon, arbitrum, base, sepolia, localhost, polygonMumbai, bscTestnet, avalancheFuji } from 'wagmi/chains';
+import { mainnet, polygon, arbitrum, base, sepolia, localhost, polygonMumbai, bscTestnet, avalancheFuji, baseSepolia } from 'wagmi/chains';
 import { defineChain } from 'wagmi';
 
 export const config = getDefaultConfig({
   appName: 'CardFi Yield Manager',
   projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID || 'demo_project_id',
-  chains: [mainnet, polygon, arbitrum, base, sepolia, polygonMumbai, bscTestnet, avalancheFuji, localhost],
+  chains: [mainnet, polygon, arbitrum, base, sepolia, baseSepolia, polygonMumbai, bscTestnet, avalancheFuji, localhost],
   ssr: true, // If your dApp uses server side rendering (SSR)
 });
 
@@ -35,8 +61,12 @@ export const CONTRACT_ADDRESSES: Record<number, {
     usdc: '0x5425890298aed601595a70AB815c96711a31Bc65', // USDC on Avalanche Fuji
   },
   [sepolia.id]: {
-    strategyVault: '0x0000000000000000000000000000000000000000', // Deploy your contract here
-    usdc: '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238', // USDC on Sepolia (Circle's official testnet USDC)
+    strategyVault: (process.env.NEXT_PUBLIC_SEPOLIA_VAULT_ADDRESS || '0x0000000000000000000000000000000000000000') as `0x${string}`,
+    usdc: (process.env.NEXT_PUBLIC_SEPOLIA_USDC_ADDRESS || '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238') as `0x${string}`,
+  },
+  [baseSepolia.id]: {
+    strategyVault: (process.env.NEXT_PUBLIC_BASE_SEPOLIA_VAULT_ADDRESS || '0x0000000000000000000000000000000000000000') as `0x${string}`,
+    usdc: (process.env.NEXT_PUBLIC_BASE_SEPOLIA_USDC_ADDRESS || '0x036CbD53842c5426634e7929541eC2318f3dCF7e') as `0x${string}`,
   },
   [localhost.id]: {
     strategyVault: (process.env.NEXT_PUBLIC_LOCAL_VAULT_ADDRESS || '0x0000000000000000000000000000000000000000') as `0x${string}`,

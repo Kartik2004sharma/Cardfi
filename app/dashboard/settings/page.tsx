@@ -287,30 +287,19 @@ export default function SettingsPage() {
                 <div>
                   <h3 className="text-lg font-medium mb-2">Wallet Security</h3>
                   <p className="text-sm text-muted-foreground mb-4">
-                    Manage your wallet security settings and connected accounts
+                    Manage your Web3 wallet connections and smart contract permissions.
                   </p>
                 </div>
 
-                <Button variant="outline" className="w-full justify-start">
+                <Button variant="outline" className="w-full justify-start cursor-not-allowed opacity-70">
                   <Wallet className="w-4 h-4 mr-2" />
-                  View Connected Wallets
+                  View Connected Wallets (Coming Soon)
                 </Button>
 
-                <Button variant="outline" className="w-full justify-start">
+                <Button variant="outline" className="w-full justify-start cursor-not-allowed opacity-70">
                   <Zap className="w-4 h-4 mr-2" />
-                  Manage App Permissions
+                  Revoke Smart Contract Permissions (Coming Soon)
                 </Button>
-
-                <Separator />
-
-                <div>
-                  <h3 className="text-lg font-medium mb-2">Account Security</h3>
-                  <div className="space-y-2">
-                    <Button variant="outline">Change Password</Button>
-                    <Button variant="outline">Enable Two-Factor Authentication</Button>
-                    <Button variant="outline">Download Recovery Codes</Button>
-                  </div>
-                </div>
               </div>
             </CardContent>
           </Card>
