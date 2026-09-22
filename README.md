@@ -1,477 +1,118 @@
-# IntelliAI ✨
-**AI-Powered Story Protocol IP Asset Management Platform**
+# CardFi Yield Manager
 
-[![Live Demo](https://img.shields.io/badge/🚀-Live%20Demo-blue?style=for-the-badge)](https://intelli-ai-self.vercel.app/)
-[![Pitch Deck](https://img.shields.io/badge/📊-Pitch%20Deck-6A4C93?style=for-the-badge)](https://drive.google.com/file/d/1QQLDq7BK3bZSyaH07PbSn4cBbnLsXEUH/view?usp=sharing)
-[![Story Protocol](https://img.shields.io/badge/Built%20on-Story%20Protocol-FF6B6B?style=flat-square)](https://storyprotocol.xyz/)
-[![Tomo Wallet](https://img.shields.io/badge/Powered%20by-Tomo%20Wallet-4ECDC4?style=flat-square)](https://tomo.inc/)
-[![deBridge](https://img.shields.io/badge/Cross--Chain-deBridge-8B5CF6?style=flat-square)](https://debridge.finance/)
+**Turn every swipe into smart yield.** CardFi is a MetaMask Card hackathon prototype for viewing card activity alongside a USDC yield vault. Its dashboard brings wallet balances, vault deposits and withdrawals, spending insights, strategy discovery, and cross-chain tools into one place.
 
-> *Transforming intellectual property management through AI-powered insights and blockchain innovation*
+## Watch CardFi
 
----
+![Animated preview of the CardFi product walkthrough](brag-output/preview.gif)
 
-## 🎯 What is IntelliAI?
+**[Play the complete 22-second walkthrough with sound](https://raw.githubusercontent.com/Kartik2004sharma/Cardfi/main/brag-output/brag.mp4)** · [Video file in this repository](brag-output/brag.mp4)
 
-IntelliAI is a next-generation platform that revolutionizes how creators and businesses manage intellectual property assets on Story Protocol. By combining advanced AI capabilities with blockchain technology, we provide an intuitive, powerful, and secure environment for IP asset creation, management, and monetization.
+The walkthrough shows the dashboard, sample card activity, and the USDC deposit form. Its balances are illustrative; it stops before any wallet signature or completed transaction.
 
-### 🌟 Key Value Propositions
+## Why CardFi exists
 
-- **🤖 AI-First Approach**: Intelligent IP asset creation and management with voice input support
-- **🔗 Seamless Integration**: Native Story Protocol integration with real-time blockchain data
-- **💼 Multi-Chain Ready**: Powered by Tomo Wallet for universal wallet connectivity
-- **🌉 Cross-Chain Bridge**: deBridge integration for seamless token transfers
-- **📊 Real-Time Analytics**: Live IP token pricing and comprehensive asset tracking
-- **🎙️ Voice Interface**: Hands-free IP management with advanced speech recognition
+CardFi explores a simple idea: keep USDC available for spending while making the rest visible and manageable in a yield vault. The product puts MetaMask Card activity next to DeFi controls so a user can inspect spending, review a vault position, and decide when to approve, deposit, or withdraw USDC. The code also includes a strategy manager with configurable rebalancing, but the current app does not automatically invest from live card transactions.
 
----
+## What is in the app
 
-## 🚀 Core Features
+| Area | What it does today |
+| --- | --- |
+| Dashboard | Connects a wallet, reads configured USDC and vault contracts, shows balances, vault metrics, a deposit preview, approval/deposit controls, withdrawal controls, and contract events. |
+| MetaMask Card | Shows spending categories, rewards, recent activity, and a delegation interface. Recent card activity is sample data, not a live card feed. |
+| Strategies | Lists sample yield opportunities with APY, TVL, risk, chain, and deposit limits. The API validates deposit parameters; it does not execute an on-chain deposit. |
+| Bridge | Presents testnet route discovery and execution controls through LI.FI integration. Availability depends on supported routes, wallet, and network configuration. |
+| Circle wallet API | Exposes wallet creation, balances, transfers, and transaction status through server-side routes. Without a Circle API key, wallet creation uses a demo response; card auto top-up is not implemented. |
+| Swap and other dashboard pages | Provide prototype interfaces for related flows. The swap page calculates mock quotes and simulates completion rather than sending a trade. |
 
-### 🤖 AI-Powered IP Assistant
-- **Smart Chat Interface**: Natural language interaction for IP asset queries and creation
-- **Voice Input Support**: Hands-free operation with `Ctrl+Shift+M` keyboard shortcut
-- **Intelligent Responses**: AI-generated insights using Perplexity and Gemini models
-- **Auto-Send Voice**: Speech-to-text with automatic message transmission
-- **Contextual Understanding**: Wallet-aware responses using connected user data
+The repository also includes a testnet USDC page, contract views, rewards, transaction, liquidity, and settings pages. Some of these views use static or example values.
 
-### 💰 Advanced Analytics Dashboard
-- **Real-Time IP Token Pricing**: Live price data from Coinbase API integration
-- **Performance Metrics**: Comprehensive tracking of IP asset performance
-- **Revenue Analytics**: Minting fees, royalties, and transaction monitoring
-- **Interactive Charts**: Responsive data visualization with trend analysis
-- **Multi-Chain Data**: Aggregated insights across supported blockchain networks
+## Main user flow
 
-### 🔗 Story Protocol Integration
-- **Native IP Asset Creation**: Streamlined asset registration with metadata management
-- **Licensing Management**: Track terms, conditions, and revenue sharing
-- **Relationship Mapping**: Visualize IP asset hierarchies and derivatives
-- **Real-Time Synchronization**: Live blockchain data from Story Protocol APIs
-- **Comprehensive Search**: Advanced filtering and discovery mechanisms
+1. Open `/dashboard` and connect a wallet with the button in the navigation bar.
+2. Select a supported network with configured USDC and vault addresses.
+3. Review USDC balance, vault assets, share price, fees, and the CardFi card activity panel.
+4. Enter a USDC amount. The vault form previews shares and, in live mode, asks for USDC approval before deposit.
+5. Redeem vault shares to withdraw when a deployed vault is available.
 
-### 💼 Wallet & Bridge Infrastructure
+The browser wallet signs live contract transactions. The server's yield strategy endpoint only returns parameters; its successful response is not proof of a deposit.
 
-#### Tomo Wallet Integration
-- **Universal Compatibility**: Support for 20+ wallets (MetaMask, Rainbow, WalletConnect)
-- **One-Click Connection**: Seamless authentication across all networks
-- **Social Sign-In**: Walletless authentication with Google, X, and more
-- **Enterprise Security**: Non-custodial with industry-standard encryption
-
-#### deBridge Cross-Chain Bridge
-- **Story Protocol Optimized**: Native token bridging for IP ecosystem
-- **DLN Technology**: Decentralized liquidity network with competitive rates
-- **Real-Time Tracking**: Order monitoring with unique IDs and status updates
-- **Multi-Chain Coverage**: Bridge between major EVM networks
-- **Transparent Fees**: Clear breakdown of protocol and solver costs
-
----
-
-## 🎙️ Voice Interface Innovation
-
-IntelliAI features cutting-edge voice recognition technology for hands-free IP management:
-
-### Voice Input Capabilities
-- **Speech-to-Text**: Advanced recognition with auto-transcription
-- **Smart Auto-Send**: Automatic message transmission after speech completion
-- **Visual Feedback**: Real-time listening indicators with animated status
-- **Keyboard Shortcuts**: `Ctrl+Shift+M` (Windows/Linux) or `Cmd+Shift+M` (Mac)
-- **Error Handling**: Graceful fallback with browser compatibility detection
-
-### User Experience
-- **Animated Status Indicators**: Pulsing microphone with sound wave effects
-- **Contextual Placeholders**: Dynamic input hints based on listening state
-- **Accessibility Support**: Full keyboard navigation and screen reader compatibility
-- **Mobile Optimized**: Touch-friendly voice activation on all devices
-
----
-
-## �️ Technical Architecture
-
-### Frontend Stack
-```typescript
-Next.js 15          // React framework with App Router
-React 19            // Latest React with concurrent features
-TypeScript          // Type-safe development
-Tailwind CSS        // Utility-first styling
-Shadcn/UI          // Modern component library
-```
-
-### AI & Integration Layer
-```typescript
-Perplexity AI       // Advanced natural language processing
-Gemini AI           // Google's multimodal AI capabilities
-Speech Recognition  // Native browser voice input API
-Coinbase API        // Real-time cryptocurrency pricing
-Story Protocol APIs // Blockchain IP asset data
-```
-
-### Blockchain Infrastructure
-```typescript
-Wagmi + Viem        // Blockchain interaction libraries
-Tomo EVM Kit        // Multi-chain wallet connectivity
-deBridge SDK        // Cross-chain bridging protocol
-Story Protocol SDK  // IP asset management
-Web3 Modal          // Wallet connection interface
-```
-
-### State Management & Performance
-```typescript
-React Query         // Data fetching and caching
-Zustand            // Lightweight state management
-React Hook Form    // Form state and validation
-Recharts           // Data visualization
-Framer Motion      // Smooth animations
-```
-
----
-
-## 📊 Workflow Diagrams
-
-### 🔄 Complete Platform Architecture
+## How it is built
 
 ```mermaid
-graph TD
-    A[👤 User] --> B[🌐 IntelliAI Frontend]
-    B --> C[🎙️ Voice Interface]
-    B --> D[💼 Tomo Wallet]
-    B --> E[🤖 AI Engine]
-    B --> F[📊 Dashboard]
-    
-    C --> G[🎵 Speech Recognition]
-    G --> H[📝 Text Processing]
-    H --> E
-    
-    D --> I[🔗 20+ Wallets]
-    D --> J[🌉 Multi-Chain]
-    
-    E --> K[🧠 Perplexity AI]
-    E --> L[💎 Gemini AI]
-    E --> M[⚡ Story Protocol APIs]
-    
-    F --> N[💰 Real-time Pricing]
-    F --> O[📈 Analytics]
-    F --> P[🎯 Asset Management]
-    
-    M --> Q[🏗️ Story Protocol Blockchain]
-    J --> R[🌉 deBridge Protocol]
-    R --> S[🔗 Cross-Chain Networks]
-    
-    style A fill:#4ECDC4
-    style B fill:#FF6B6B
-    style E fill:#8B5CF6
-    style Q fill:#FFD93D
+flowchart LR
+    User[Wallet user] --> UI[Next.js dashboard]
+    UI --> Wallet[wagmi / RainbowKit wallet connection]
+    Wallet --> Vault[StrategyVault on selected chain]
+    Wallet --> USDC[USDC token]
+    UI --> Card[Sample card activity and delegation UI]
+    UI --> YieldAPI[Sample yield strategy API]
+    UI --> Bridge[LI.FI bridge routes]
+    UI --> CircleAPI[Circle wallet API]
+    CircleAPI --> Circle[Circle sandbox when configured]
 ```
 
-### 🎙️ Voice Input Workflow
+- **Frontend:** Next.js 16 App Router, React 19, TypeScript, Tailwind CSS, Radix UI, and Recharts.
+- **Wallet and chain access:** wagmi, viem, RainbowKit, and MetaMask SDK.
+- **Integrations:** LI.FI route tools, Circle API routes, and MetaMask delegation code.
+- **Smart contracts:** Solidity 0.8.20 with OpenZeppelin, developed and tested with Hardhat.
 
-```mermaid
-sequenceDiagram
-    participant U as 👤 User
-    participant V as 🎙️ Voice Interface
-    participant S as 🎵 Speech Recognition
-    participant A as 🤖 AI Engine
-    participant B as ⛓️ Blockchain
-    participant W as 💼 Wallet
-    
-    U->>V: Press Ctrl+Shift+M or Click Mic
-    V->>S: Activate Speech Recognition
-    S->>V: Start Listening (Animated UI)
-    U->>S: Speak Command
-    S->>V: Convert Speech to Text
-    V->>A: Send Text + Wallet Context
-    A->>B: Fetch Real-time Data
-    A->>W: Get Wallet Address
-    A->>V: Return AI Response
-    V->>U: Display Results + Auto-send
-    
-    Note over V: Visual feedback with pulsing mic
-    Note over A: Context-aware responses
-    Note over W: Non-custodial security
+### Smart contracts
+
+| Contract | Purpose |
+| --- | --- |
+| `StrategyVault.sol` | USDC deposits and redemptions, vault shares, fee accounting, APY reporting, and delayed emergency withdrawal. This is the vault ABI used by the dashboard. |
+| `YieldManager.sol` | Strategy registry, position tracking, Aave/Compound routing logic, rebalance settings, keeper authorization, and emergency exit. |
+| `YieldVault.sol` and `YieldVaultFactory.sol` | Alternative vault and factory contracts included in the repository. |
+| `MockUSDC.sol` and `MockStrategyVault.sol` | Local testing and demonstration contracts. |
+
+The contract sources and the frontend are not evidence of a public deployment. A working live vault needs deployed addresses for the selected network and a compatible token balance.
+
+## Run locally
+
+Prerequisites: Node.js with npm, a browser wallet for wallet flows, and a WalletConnect project ID for reliable wallet connection.
+
+```bash
+git clone https://github.com/Kartik2004sharma/Cardfi.git
+cd Cardfi
+npm ci
+cp .env.example .env.local
+npm run dev
 ```
 
-### 🎨 IP Asset Creation Flow
+Visit [http://localhost:3000](http://localhost:3000). The landing page is `/`; the vault dashboard is `/dashboard`.
 
-```mermaid
-flowchart TD
-    A[🚀 Start Creation] --> B{💼 Wallet Connected?}
-    B -->|No| C[🔐 Connect Wallet via Tomo]
-    B -->|Yes| D[🎙️ Voice or Text Input]
-    C --> D
-    
-    D --> E[📝 Asset Name]
-    E --> F[📄 Description]
-    F --> G[👤 Creator Info]
-    G --> H[🖼️ Image Upload]
-    H --> I[🔍 AI Validation]
-    
-    I --> J{✅ Valid Data?}
-    J -->|No| K[❌ Show Errors]
-    K --> E
-    J -->|Yes| L[📡 Submit to Story Protocol]
-    
-    L --> M[⛓️ Blockchain Transaction]
-    M --> N[📋 Metadata to IPFS]
-    N --> O[🎉 Success Response]
-    
-    O --> P[📊 Update Dashboard]
-    O --> Q[💰 Track Performance]
-    
-    style A fill:#4ECDC4
-    style O fill:#90EE90
-    style K fill:#FFB6C1
-    style L fill:#FFD93D
+The example environment file contains placeholders. Set `NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID` to your own project ID. For on-chain vault operations, set the USDC and vault addresses for the network you are using. The frontend currently reads `NEXT_PUBLIC_SEPOLIA_*`, `NEXT_PUBLIC_BASE_SEPOLIA_*`, or `NEXT_PUBLIC_LOCAL_*` addresses from `lib/web3-config.ts`; a zero vault address is a placeholder, not a deployed contract.
+
+| Variable | Used for |
+| --- | --- |
+| `NEXT_PUBLIC_DEMO_MODE` | Set to `true` to simulate vault deposits and withdrawals on Sepolia or Polygon Mumbai; demo positions are stored in browser local storage. Default is `false`. |
+| `NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID` | Wallet connection through RainbowKit. |
+| `NEXT_PUBLIC_*_USDC_ADDRESS`, `NEXT_PUBLIC_*_VAULT_ADDRESS` | Token and vault contract addresses for the selected network. |
+| `CIRCLE_API_KEY`, `CIRCLE_ENVIRONMENT`, `CIRCLE_API_URL` | Server-side Circle wallet integration. Keep the API key private. |
+| `LIFI_API_KEY` | Optional LI.FI configuration for routes that require a key. |
+| `PRIVATE_KEY` and RPC URLs | Hardhat deployment scripts only. Never commit a real private key. |
+
+To run the contract checks:
+
+```bash
+npx hardhat compile
+npx hardhat test
 ```
 
-### 🌉 Cross-Chain Bridge Workflow
+## Repository map
 
-```mermaid
-graph LR
-    A[💼 User Wallet] --> B[🌉 deBridge Interface]
-    B --> C{🔍 Select Networks}
-    
-    C --> D[� Tomo]
-    C --> E[🟣 Polygon]
-    C --> F[🔴 Arbitrum]
-    C --> G[🔵 Optimism]
-    C --> H[📖 Story Protocol]
-    
-    D --> I[💰 Select Token & Amount]
-    E --> I
-    F --> I
-    G --> I
-    H --> I
-    
-    I --> J[🧮 Calculate Fees]
-    J --> K[✅ Confirm Transaction]
-    K --> L[⚡ DLN Processing]
-    
-    L --> M[🔗 Cross-Chain Transfer]
-    M --> N[📊 Real-time Tracking]
-    N --> O[✅ Completion Notification]
-    
-    style A fill:#4ECDC4
-    style L fill:#8B5CF6
-    style O fill:#90EE90
-```
+- `app/` — landing page, dashboard routes, and API routes for yield, wallet, and LI.FI operations.
+- `components/` — dashboard, card, bridge, wallet, and interface components.
+- `hooks/` — vault reads and writes, demo vault state, MetaMask, and bridge hooks.
+- `lib/` — network configuration and integration services.
+- `contracts/`, `test/`, `scripts/` — Solidity contracts, Hardhat tests, and deployment scripts.
+- `brag-output/brag.mp4` — the CardFi product walkthrough shown above.
 
-### 🤖 AI Processing Pipeline
+## Current limitations
 
-```mermaid
-graph TD
-    A[📥 User Query] --> B{🎙️ Voice or Text?}
-    B -->|Voice| C[🎵 Speech Recognition]
-    B -->|Text| D[📝 Text Input]
-    
-    C --> E[📄 Transcript Processing]
-    D --> E
-    E --> F[🧠 Intent Analysis]
-    
-    F --> G{🎯 Query Type?}
-    G -->|General| H[🌐 Perplexity AI]
-    G -->|IP Asset| I[⛓️ Story Protocol APIs]
-    G -->|Create Asset| J[🎨 Asset Creation Flow]
-    
-    H --> K[📚 Knowledge Processing]
-    I --> L[📊 Blockchain Data]
-    J --> M[🔧 Guided Creation]
-    
-    K --> N[💼 Wallet Context]
-    L --> N
-    M --> N
-    
-    N --> O[🎨 Response Generation]
-    O --> P[📱 UI Display]
-    
-    style F fill:#8B5CF6
-    style N fill:#FFD93D
-    style P fill:#4ECDC4
-```
+Card activity, several analytics panels, and the yield strategy catalog are illustrative. The strategy API's deposit response does not submit a transaction. The swap page is a simulation. Demo vault mode does not move USDC on-chain. Circle actions and LI.FI routes depend on external configuration, and no public contract addresses are supplied in this repository. Treat the shown APYs and rewards as examples, not live returns.
 
-### 📊 Real-Time Data Flow
+## License
 
-```mermaid
-graph LR
-    A[🏗️ Story Protocol] --> B[📡 Story APIs]
-    C[💰 Coinbase API] --> D[💱 Price Data]
-    E[⛓️ Multi-Chain] --> F[🌉 deBridge APIs]
-    
-    B --> G[📊 IntelliAI Backend]
-    D --> G
-    F --> G
-    
-    G --> H[🎯 Data Processing]
-    H --> I[📈 Analytics Engine]
-    H --> J[🤖 AI Context]
-    H --> K[💼 Wallet Integration]
-    
-    I --> L[📱 Dashboard UI]
-    J --> M[🎙️ AI Responses]
-    K --> N[🔐 User Context]
-    
-    L --> O[👤 User Experience]
-    M --> O
-    N --> O
-    
-    style G fill:#FF6B6B
-    style H fill:#8B5CF6
-    style O fill:#4ECDC4
-```
-
----
-
-## 🌟 User Journey
-
-### 1. **Connect & Authenticate**
-- Choose from 20+ supported wallets via Tomo integration
-- Automatic network detection and switching
-- Secure, non-custodial connection
-
-### 2. **Explore IP Ecosystem**
-- Browse Story Protocol IP assets with advanced filtering
-- Real-time market data and pricing information
-- AI-powered asset recommendations
-
-### 3. **Create IP Assets**
-- Voice-guided asset creation process
-- Wallet-aware metadata assignment
-- Automated blockchain registration
-
-### 4. **Manage & Monitor**
-- Track asset performance and royalty streams
-- Cross-chain portfolio management
-- AI insights for optimization
-
-### 5. **Bridge & Transfer**
-- Cross-chain token movements via deBridge
-- Real-time transaction tracking
-- Transparent fee structure
-
----
-
-## 🎯 Innovation Highlights
-
-### AI Integration
-- **Multi-Model Approach**: Combining Perplexity and Gemini for comprehensive AI capabilities
-- **Contextual Intelligence**: Wallet-aware responses with personalized insights
-- **Voice-First Design**: Pioneering speech interface for blockchain applications
-- **Real-Time Processing**: Instant AI responses with live blockchain data
-
-### Blockchain Innovation
-- **Story Protocol Focus**: Purpose-built for IP asset management
-- **Multi-Chain Architecture**: Seamless operation across EVM networks
-- **Real-Time Synchronization**: Live data feeds from multiple blockchain sources
-- **User-Centric Design**: Simplified complexity without sacrificing functionality
-
-### User Experience
-- **Zero Learning Curve**: Intuitive interface for both Web3 natives and newcomers
-- **Accessibility First**: Voice control, keyboard shortcuts, and screen reader support
-- **Performance Optimized**: Sub-second response times with efficient caching
-- **Mobile Ready**: Responsive design optimized for all device types
-
----
-
-## 🚀 Getting Started
-
-### Prerequisites
-- Modern web browser (Chrome, Firefox, Safari, Edge)
-- EVM-compatible wallet or social login credentials
-- Internet connection for real-time data
-
-### Quick Start Guide
-
-1. **Visit [IntelliAI Dashboard](https://intelliai.vercel.app/)**
-
-2. **Connect Your Wallet**
-   - Click "Connect Wallet" in the header
-   - Choose your preferred wallet or social login
-   - Automatic network configuration
-
-3. **Explore AI Chat**
-   - Use voice input with `Ctrl+Shift+M`
-   - Ask questions about IP assets or Story Protocol
-   - Experience real-time AI responses
-
-4. **Create IP Assets**
-   - Navigate to AI Chat and say "Create new IP asset"
-   - Follow the guided creation process
-   - Your connected wallet is automatically linked
-
-5. **Monitor Analytics**
-   - View real-time IP token pricing
-   - Track your asset performance
-   - Access cross-chain insights
-
----
-
-## 🎉 Hackathon Achievements
-
-### Tomo Wallet Integration Excellence
-- ✅ Universal wallet support (20+ wallets)
-- ✅ Social authentication integration
-- ✅ Multi-chain connectivity
-- ✅ Enterprise-grade security
-- ✅ Mobile optimization
-
-### deBridge Integration Success
-- ✅ Cross-chain token bridging
-- ✅ Real-time order tracking
-- ✅ Transparent fee structure
-- ✅ DLN technology implementation
-- ✅ Story Protocol optimization
-
-### Innovation Highlights
-- ✅ First AI voice interface for IP management
-- ✅ Real-time IP token pricing integration
-- ✅ Wallet-aware AI responses
-- ✅ Comprehensive Story Protocol integration
-- ✅ Professional UX/UI design
-
----
-
-## 📞 Support & Community
-
-- **Twitter/X**: [@IntelliAI_platform](https://x.com/Intelli_ai_)\
-- **Email**: tanishqgupta322@gmail.com
-
----
-
-## 🙏 Acknowledgments
-
-Special thanks to our technology partners:
-
-- **[Tomo Inc.](https://tomo.inc/)** - Revolutionary multi-chain wallet infrastructure
-- **[deBridge](https://debridge.finance/)** - Advanced cross-chain bridging protocol
-- **[Story Protocol](https://storyprotocol.xyz/)** - Innovative IP infrastructure
-- **[Perplexity AI](https://perplexity.ai/)** - Advanced AI reasoning capabilities
-- **[Google Gemini](https://gemini.google.com/)** - Multimodal AI technology
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-## 🚀 Future Roadmap
-
-- [ ] **Mobile Native App** - iOS and Android applications
-- [ ] **Advanced AI Models** - Custom IP-focused training
-- [ ] **Social Features** - Community IP collaboration
-- [ ] **Enterprise Tools** - Business-grade IP management
-- [ ] **API Marketplace** - Third-party integrations
-- [ ] **Global Localization** - Multi-language support
-
----
-
-<div align="center">
-
-**Built with ❤️ for the future of intellectual property**
-
-*Empowering creators, protecting innovation, and building the decentralized IP economy*
-
-[🚀 Launch IntelliAI](https://intelli-ai-self.vercel.app/) | [🐦 Follow Us](https://x.com/Intelli_ai_)
-
-</div>
-```
-
+No license has been added to this repository.
