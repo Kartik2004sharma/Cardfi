@@ -4,9 +4,9 @@
 
 ## Watch CardFi
 
-![Animated preview of the CardFi product walkthrough](brag-output/preview.gif)
 
-**[Play the complete 22-second walkthrough with sound](https://raw.githubusercontent.com/Kartik2004sharma/Cardfi/main/brag-output/brag.mp4)** · [Video file in this repository](brag-output/brag.mp4)
+https://github.com/user-attachments/assets/e25e2c5f-aa8a-4550-bfea-ae3d579e6f15
+
 
 The walkthrough shows the dashboard, sample card activity, and the USDC deposit form. Its balances are illustrative; it stops before any wallet signature or completed transaction.
 
@@ -80,7 +80,7 @@ cp .env.example .env.local
 npm run dev
 ```
 
-Visit [http://localhost:3000](http://localhost:3000). The landing page is `/`; the vault dashboard is `/dashboard`.
+Visit [https://cardfi-eta.vercel.app/). The landing page is `/`; the vault dashboard is `/dashboard`.
 
 The example environment file contains placeholders. Set `NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID` to your own project ID. For on-chain vault operations, set the USDC and vault addresses for the network you are using. The frontend currently reads `NEXT_PUBLIC_SEPOLIA_*`, `NEXT_PUBLIC_BASE_SEPOLIA_*`, or `NEXT_PUBLIC_LOCAL_*` addresses from `lib/web3-config.ts`; a zero vault address is a placeholder, not a deployed contract.
 
