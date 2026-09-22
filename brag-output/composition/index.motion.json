@@ -1,0 +1,8 @@
+{
+  "duration": 22,
+  "assertions": [
+    { "kind": "appearsBy", "selector": "#product-frame", "bySec": 4 },
+    { "kind": "appearsBy", "selector": "#approve-label", "bySec": 16 },
+    { "kind": "staysInFrame", "selector": "#product-frame" }
+  ]
+}

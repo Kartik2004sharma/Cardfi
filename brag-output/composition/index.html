@@ -1,14 +1,15 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=1920, height=1080" />
-  <title>CardFi Brag</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1920, height=1080">
+  <title>CardFi — product walkthrough</title>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
   <style>
-    :root { --bg:#050706; --ink:#f5f7f5; --muted:#a7b0aa; --line:#26342c; --green:#27d17c; --panel:#0c110e; }
-    * { box-sizing:border-box; } body { margin:0; background:var(--bg); color:var(--ink); font-family:Arial, Helvetica, sans-serif; }
-    #root { position:relative; width:100%; height:100%; overflow:hidden; background:radial-gradient(circle at 76% 32%, #163a26 0%, transparent 25%), var(--bg); }
+    @font-face { font-family:Geist; src:url('assets/fonts/geist-latin.woff2') format('woff2'); font-style:normal; font-weight:100 900; }
+    :root { --bg:#050706; --ink:#f5f7f5; --muted:#a7b0aa; --line:#26342c; --green:#27d17c; }
+    * { box-sizing:border-box; } body { margin:0; background:var(--bg); color:var(--ink); font-family:Arial,Helvetica,sans-serif; }
+    #root { position:relative; width:100%; height:100%; overflow:hidden; background:radial-gradient(circle at 76% 32%,#163a26 0%,transparent 25%),var(--bg); }
     .ambient { position:absolute; border:1px solid rgba(39,209,124,.15); border-radius:50%; pointer-events:none; }
     .ambient.one { width:900px; height:900px; left:-340px; bottom:-430px; } .ambient.two { width:620px; height:620px; right:-170px; top:-270px; }
     .grid { position:absolute; inset:0; opacity:.18; background-image:linear-gradient(rgba(39,209,124,.12) 1px,transparent 1px),linear-gradient(90deg,rgba(39,209,124,.12) 1px,transparent 1px); background-size:80px 80px; }
@@ -18,33 +19,176 @@
     h1 { font-size:112px; line-height:.94; margin:24px 0; max-width:1100px; letter-spacing:-.07em; } h1 em { font-style:normal; color:var(--green); }
     .lede { color:var(--muted); font-size:29px; line-height:1.35; max-width:740px; }
     .pill { display:inline-flex; border:1px solid rgba(39,209,124,.55); border-radius:999px; padding:12px 18px; color:#b9f7d6; font-size:20px; margin-top:34px; }
-    .card { width:420px; height:260px; border:1px solid #4b6556; border-radius:28px; padding:32px; background:linear-gradient(135deg,#17231b,#09100c); box-shadow:0 30px 90px rgba(0,0,0,.45); position:absolute; right:80px; top:75px; }
+    .card { width:420px; height:260px; border:1px solid #4b6556; border-radius:28px; padding:32px; background:linear-gradient(135deg,#17231b,#09100c); box-shadow:0 30px 90px #0007; position:absolute; right:80px; top:75px; }
     .card .brand { font-size:28px; font-weight:800; letter-spacing:.04em; } .card .chip { width:58px; height:42px; margin-top:45px; border-radius:8px; background:linear-gradient(135deg,#e4ece6,#76917d); } .card .digits { margin-top:25px; color:#cdebd8; letter-spacing:.14em; font-size:23px; }
-    .dashboard { width:1640px; border:1px solid #405546; border-radius:27px; padding:14px; background:#0a0e0b; box-shadow:0 32px 90px rgba(0,0,0,.55); } .dashboard img { width:100%; display:block; border-radius:17px; } .dash-label { position:absolute; top:95px; right:34px; padding:14px 19px; border-radius:999px; background:#d9f7e5; color:#102116; font-size:19px; font-weight:700; }
-    .product-window { width:1600px; height:730px; margin-top:34px; overflow:hidden; border:1px solid #405546; border-radius:26px; background:#0a0e0b; box-shadow:0 32px 90px rgba(0,0,0,.55); position:relative; } .product-window img { width:1600px; height:900px; object-fit:cover; object-position:center top; display:block; } .product-window.activity img { width:1830px; height:1029px; margin-left:-115px; margin-top:-85px; } .product-window.deposit img { width:1900px; height:1068px; margin-left:-150px; margin-top:-230px; }
-    .product-callout { position:absolute; z-index:2; border:1px solid rgba(39,209,124,.65); border-radius:16px; background:rgba(6,13,9,.92); padding:16px 20px; color:#d7f9e5; font-weight:700; font-size:21px; box-shadow:0 12px 30px rgba(0,0,0,.45); } .product-callout small { display:block; color:#99b5a3; font-size:15px; font-weight:400; margin-top:5px; } .activity .product-callout { right:56px; top:280px; } .deposit .product-callout { right:58px; bottom:48px; }
     .close { text-align:center; } .close h2 { font-size:96px; letter-spacing:-.065em; margin:28px 0; } .wordmark { font-size:38px; font-weight:800; letter-spacing:.1em; } .url { color:var(--muted); font-size:21px; margin-top:24px; }
+    #scene-product { padding:0; display:block; font-family:Geist,Arial,sans-serif; }
+    .chapter-bar { position:absolute; top:62px; left:104px; right:104px; display:flex; justify-content:space-between; align-items:center; }
+    .film-brand { font-size:24px; font-weight:700; letter-spacing:.1em; }
+    .chapters { display:flex; gap:38px; color:#a7b0aa; font-size:22px; }
+    .chapter { display:flex; gap:12px; align-items:center; }
+    .chapter b { font-size:17px; border:1px solid #536159; border-radius:50%; width:30px; height:30px; display:flex; justify-content:center; align-items:center; }
+    .product-frame { position:absolute; left:100px; top:136px; width:1720px; height:860px; border:1px solid #435048; border-radius:20px; background:#080a09; box-shadow:0 32px 90px #0009; overflow:hidden; }
+    .app-header { height:78px; margin:0 40px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid #2c302e; }
+    .app-logo { display:flex; align-items:center; gap:12px; font-size:29px; font-weight:700; }
+    .app-icon { width:30px; height:30px; fill:none; stroke:currentColor; stroke-width:1.6; }
+    .app-tabs,.wallet { display:flex; gap:18px; align-items:center; font-size:20px; }
+    .app-tab { padding:13px 21px; border-radius:9px; color:#b8bfc4; }
+    .app-tab.active { background:#f1f2f2; color:#131715; font-weight:600; }
+    .wallet span { padding:12px 18px; border:1px solid #313632; border-radius:8px; }
+    .subnav { height:56px; padding:0 44px; border-bottom:1px solid #292e2b; display:flex; align-items:center; gap:48px; font-size:19px; color:#b8bfc4; }
+    .viewport { position:relative; height:724px; overflow:hidden; }
+    .page { position:absolute; left:38px; right:38px; top:30px; height:2060px; }
+    .overview { position:absolute; inset:0 0 auto; height:625px; }
+    .app-title { font-size:39px; letter-spacing:-.045em; font-weight:700; margin:0 0 10px; line-height:1.15; }
+    .app-desc { font-size:21px; color:#b2b8bf; margin:0; line-height:1.45; }
+    .ui-panel { border:1px solid #323833; border-radius:11px; background:#0a0c0b; padding:25px 28px; }
+    .ui-heading { font-size:25px; font-weight:650; margin:0 0 8px; line-height:1.25; }
+    .ui-small { color:#b2b8bf; font-size:18px; line-height:1.4; }
+    .integration { position:absolute; top:109px; width:100%; height:177px; }
+    .status-row { display:flex; justify-content:space-between; align-items:center; margin-top:27px; font-size:21px; }
+    .status { display:flex; gap:10px; align-items:center; }
+    .checkmark { color:#27d17c; font-size:26px; }
+    .badge { display:inline-flex; padding:5px 13px; border-radius:999px; background:#ecefed; color:#151b17; font-size:17px; font-weight:600; line-height:1.1; }
+    .badge.green { background:#d6f9e4; color:#123720; } .badge.muted { color:#f0f3f1; background:#303633; } .badge.outline { background:none; color:#c3ccc6; border:1px solid #526259; }
+    .metrics { position:absolute; top:310px; width:100%; display:grid; grid-template-columns:repeat(4,1fr); gap:22px; }
+    .metric { height:132px; padding:22px 26px; }
+    .metric-label { font-size:20px; margin-bottom:10px; display:flex; align-items:center; justify-content:space-between; }
+    .metric-value { font-size:33px; font-weight:650; margin-bottom:6px; line-height:1; }
+    .green-text { color:#27d17c; }
+    .rewards { position:absolute; top:466px; width:100%; display:grid; grid-template-columns:repeat(3,1fr); gap:22px; }
+    .rewards .metric { height:140px; }
+    .activity-view { position:absolute; top:730px; width:100%; height:585px; }
+    .section-heading { display:flex; gap:18px; align-items:center; margin-bottom:27px; }
+    .section-heading .app-title { margin:0; }
+    .activity-columns { display:grid; grid-template-columns:.9fr 1.1fr; gap:24px; }
+    .activity-columns .ui-panel { height:481px; }
+    .category { margin-top:40px; }
+    .category-label { font-size:22px; display:flex; justify-content:space-between; margin-bottom:13px; }
+    .bar-track { height:9px; border-radius:5px; background:#292f2b; overflow:hidden; }
+    .bar-fill { height:100%; background:#e6eee9; border-radius:5px; transform-origin:left center; }
+    .category:nth-of-type(3) .bar-fill { background:#27d17c; }
+    .transactions { margin-top:24px; }
+    .transaction { display:flex; justify-content:space-between; align-items:center; border:1px solid #343d36; border-radius:9px; padding:18px 20px; margin-top:13px; height:103px; }
+    .merchant { font-size:23px; font-weight:550; margin-bottom:7px; }
+    .tx-right { text-align:right; } .tx-right strong { display:block; font-size:24px; margin-bottom:8px; }
+    .deposit-view { position:absolute; top:1460px; width:100%; height:600px; }
+    .deposit-columns { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+    .deposit-panel,.withdraw-panel { height:430px; }
+    .field-label { font-size:21px; margin:26px 0 12px; }
+    .amount-field { height:65px; border:1px solid #4a544d; border-radius:8px; display:flex; align-items:center; padding:0 18px; font-size:30px; }
+    .placeholder { color:#a3aca7; position:absolute; } .typed { display:flex; color:#f5f7f5; }
+    .caret { width:2px; height:31px; background:#d7e9de; margin-left:3px; }
+    .available { font-size:18px; color:#b2b8bf; margin-top:10px; }
+    .preview-tokens { background:#1d2520; border-radius:7px; padding:14px 16px; margin-top:17px; font-size:20px; }
+    .deposit-button { position:absolute; left:29px; right:calc(50% + 42px); top:356px; height:52px; border-radius:8px; background:#edf1ee; color:#111b15; display:flex; align-items:center; justify-content:center; font-size:21px; font-weight:600; }
+    .approve-label { position:absolute; }
+    .withdraw-button { margin-top:58px; height:52px; border:1px solid #4b554e; color:#adb8b0; border-radius:8px; font-size:21px; display:flex; align-items:center; justify-content:center; }
+    .vault-info { position:absolute; top:454px; width:100%; height:146px; }
+    .vault-fields { display:grid; grid-template-columns:repeat(3,1fr); margin-top:21px; }
+    .vault-fields strong { display:block; font-size:23px; margin-top:5px; font-weight:550; }
+    .walkthrough-note { position:absolute; left:106px; right:106px; bottom:28px; color:#b4bfb7; font-size:18px; display:flex; justify-content:space-between; }
+    .scroll-track { position:absolute; top:154px; right:9px; width:4px; height:674px; border-radius:2px; background:#222a24; }
+    .scroll-thumb { height:180px; border-radius:2px; background:#87978c; }
+    .hf-simulated-cursor { position:absolute; left:0; top:0; width:44px; height:44px; z-index:9; pointer-events:none; filter:drop-shadow(0 5px 9px #0008); }
+    .hf-simulated-cursor-pulse { position:absolute; left:-10px; top:-10px; width:36px; height:36px; border:2px solid #c2e7d1; border-radius:50%; opacity:0; }
+    .hf-simulated-cursor svg { width:44px; height:44px; }
   </style>
 </head>
 <body>
-  <div id="root" data-composition-id="cardfi-brag" data-start="0" data-width="1920" data-height="1080" data-duration="22" data-fps="30">
-    <div class="grid"></div><div class="ambient one" data-layout-allow-overflow></div><div class="ambient two" data-layout-allow-overflow></div>
-    <section id="scene-hook" class="clip" data-start="0" data-duration="3" data-track-index="1"><div class="stage" id="hook"><div class="eyebrow">Built for MetaMask Card</div><h1>EVERY SWIPE.<br><em>SMART YIELD.</em></h1><p class="lede">CardFi turns card activity into a visible USDC yield loop.</p><span class="pill">AUTOMATED • MULTICHAIN • USDC</span><div class="card" id="payment-card"><div class="brand">CARDFI</div><div class="chip"></div><div class="digits">•••• 9206</div></div></div></section>
-    <section id="scene-routing" class="clip" data-start="3" data-duration="5" data-track-index="2"><div class="stage" id="routing"><div class="eyebrow">The actual product</div><div class="dashboard"><img src="assets/images/cardfi-dashboard.png" alt="CardFi yield dashboard overview" /></div><div class="dash-label">META MASK CARD • READY</div></div></section>
-    <section id="scene-proof" class="clip" data-start="8" data-duration="5.5" data-track-index="3"><div class="stage" id="proof"><div class="eyebrow">Card-linked yield status</div><div class="product-window activity"><img data-layout-allow-overflow src="assets/images/cardfi-card-activity.png" alt="CardFi dashboard card activity view" /><div class="product-callout">Card Activity <small>Spend data and rewards stay visible.</small></div></div></div></section>
-    <section id="scene-features" class="clip" data-start="13.5" data-duration="5.5" data-track-index="4"><div class="stage" id="features"><div class="eyebrow">Manage USDC in one place</div><div class="product-window deposit"><img data-layout-allow-overflow src="assets/images/cardfi-deposit.png" alt="CardFi dashboard yield management view" /><div class="product-callout">Deposit USDC <small>Start earning through the vault workflow.</small></div></div></div></section>
-    <section id="scene-outro" class="clip" data-start="19" data-duration="3" data-track-index="5"><div class="stage close" id="outro"><div class="eyebrow">CardFi Yield Manager</div><h2>Spend normally.<br><em>Let USDC do more.</em></h2><div class="wordmark">CARDFI</div><div class="url">cardfi-eta.vercel.app</div></div></section>
-    <audio id="music" data-start="0" data-duration="22" data-track-index="10" data-volume="0.32" src="assets/music/happy-beats-business-moves-vol-12-by-ende-dot-app.mp3"></audio>
-  </div>
-  <script>
-    const tl = gsap.timeline({ paused:true });
-    tl.from('#hook .eyebrow', { opacity:0, y:18, duration:.45, ease:'power2.out' }, .25).from('#hook h1', { opacity:0, y:48, duration:.7, ease:'power3.out' }, .45).from('#hook .lede, #hook .pill', { opacity:0, y:22, duration:.5, stagger:.12, ease:'power2.out' }, .8).from('#payment-card', { opacity:0, x:120, rotation:8, duration:.75, ease:'power3.out' }, .55);
-    tl.from('#routing .eyebrow', { opacity:0, y:22, duration:.45, ease:'power2.out' }, 3.25).from('#routing .dashboard', { opacity:0, y:55, scale:.96, duration:.75, ease:'power3.out' }, 3.45).from('#routing .dash-label', { opacity:0, x:35, duration:.4, ease:'power2.out' }, 4.05);
-    tl.from('#proof .eyebrow', { opacity:0, y:22, duration:.45, ease:'power2.out' }, 8.25).from('#proof .product-window', { opacity:0, y:55, scale:.97, duration:.7, ease:'power3.out' }, 8.5).from('#proof .product-callout', { opacity:0, x:35, duration:.4, ease:'power2.out' }, 9.2);
-    tl.from('#features .eyebrow', { opacity:0, y:22, duration:.45, ease:'power2.out' }, 13.75).from('#features .product-window', { opacity:0, y:55, scale:.97, duration:.7, ease:'power3.out' }, 14).from('#features .product-callout', { opacity:0, x:35, duration:.4, ease:'power2.out' }, 14.7);
-    tl.from('#outro .eyebrow, #outro h2, #outro .wordmark, #outro .url', { opacity:0, y:28, duration:.46, stagger:.13, ease:'power3.out' }, 19.2);
-    tl.to('.ambient.one', { x:45, y:-24, duration:21, ease:'none' }, 0).to('.ambient.two', { x:-35, y:35, duration:21, ease:'none' }, 0);
-    window.__timelines['cardfi-brag'] = tl;
-  </script>
+<div id="root" data-composition-id="cardfi-brag" data-start="0" data-width="1920" data-height="1080" data-duration="22" data-fps="30">
+  <div class="grid"></div><div class="ambient one" data-layout-allow-overflow></div><div class="ambient two" data-layout-allow-overflow></div>
+  <section id="scene-hook" class="clip" data-start="0" data-duration="3" data-track-index="1"><div class="stage" id="hook"><div class="eyebrow">Built for MetaMask Card</div><h1>EVERY SWIPE.<br><em>SMART YIELD.</em></h1><p class="lede">CardFi turns card activity into a visible USDC yield loop.</p><span class="pill">AUTOMATED • MULTICHAIN • USDC</span><div class="card" id="payment-card"><div class="brand">CARDFI</div><div class="chip"></div><div class="digits">•••• 9206</div></div></div></section>
+  <section id="scene-product" class="clip" data-start="3" data-duration="16" data-track-index="2">
+    <div class="chapter-bar"><div class="film-brand">CARDFI</div><div class="chapters"><div class="chapter" id="chapter-overview"><b>01</b> Overview</div><div class="chapter" id="chapter-activity"><b>02</b> Card activity</div><div class="chapter" id="chapter-deposit"><b>03</b> Deposit USDC</div></div></div>
+    <div class="product-frame" id="product-frame">
+      <div class="app-header"><div class="app-logo"><svg class="app-icon" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 9h20M6 15h5"/></svg>CardFi</div><div class="app-tabs"><span class="app-tab">⌂ &nbsp; Home</span><span class="app-tab active">▥ &nbsp; Dashboard</span></div><div class="wallet"><span>◉ &nbsp; Sepolia</span><span>0xD2…9206</span></div></div>
+      <div class="subnav"><span>Strategies</span><span>Liquidity</span><span>Swap</span><span>Contracts</span><span>Rewards</span><span>Settings</span></div>
+      <div class="viewport"><div class="page" id="product-page" data-layout-allow-overflow>
+        <div class="overview">
+          <h2 class="app-title">CardFi Yield Manager</h2><p class="app-desc">Manage your DeFi yield strategies and MetaMask Card rewards</p>
+          <div class="ui-panel integration"><h3 class="ui-heading">Enhanced MetaMask Integration</h3><div class="ui-small">Advanced features for MetaMask Card users</div><div class="status-row"><div class="status"><span class="checkmark">✓</span>MetaMask <span class="badge">Installed</span></div><div class="status"><span class="checkmark">✓</span>Enhanced SDK <span class="badge">Ready</span></div><div class="status">Card Activity <span class="badge green">Active</span></div><div class="status">Delegation <span class="badge muted">Manual</span></div></div></div>
+          <div class="metrics">
+            <div class="ui-panel metric"><div class="metric-label">Total Value Locked <span>$</span></div><div class="metric-value">$0</div><div class="ui-small">USDC in vault</div></div>
+            <div class="ui-panel metric"><div class="metric-label">Current APY <span>↗</span></div><div class="metric-value green-text">0.00%</div><div class="ui-small">Annual percentage yield</div></div>
+            <div class="ui-panel metric"><div class="metric-label">Your Balance <span>◷</span></div><div class="metric-value">0.0000</div><div class="ui-small">Vault tokens</div></div>
+            <div class="ui-panel metric"><div class="metric-label">USDC Balance <span>⊞</span></div><div class="metric-value">1,000.00</div><div class="ui-small">Available to deposit</div></div>
+          </div>
+          <div class="rewards">
+            <div class="ui-panel metric"><div class="metric-label">Card Rewards <span>☆</span></div><div class="metric-value">$1.28</div><div class="ui-small">Available for yield generation</div></div>
+            <div class="ui-panel metric"><div class="metric-label">Monthly Spending <span>▤</span></div><div class="metric-value">$128.24</div><div class="ui-small">Last 30 days</div></div>
+            <div class="ui-panel metric"><div class="metric-label">Yield Status <span>⚙</span></div><div class="metric-value"><span class="badge muted">Inactive</span></div><div class="ui-small">Manual management</div></div>
+          </div>
+        </div>
+        <div class="activity-view">
+          <div class="section-heading"><h2 class="app-title">Your card activity, at a glance.</h2><span class="badge outline">Sample Data</span></div>
+          <div class="activity-columns">
+            <div class="ui-panel"><h3 class="ui-heading">Spending by Category</h3><div class="ui-small">Your MetaMask Card activity breakdown</div>
+              <div class="category"><div class="category-label"><span>Food &amp; Dining</span><span>$25.99</span></div><div class="bar-track"><div class="bar-fill" style="width:20.27%"></div></div></div>
+              <div class="category"><div class="category-label"><span>Transportation</span><span>$89.50</span></div><div class="bar-track"><div class="bar-fill" style="width:69.79%"></div></div></div>
+              <div class="category"><div class="category-label"><span>Entertainment</span><span>$12.75</span></div><div class="bar-track"><div class="bar-fill" style="width:9.94%"></div></div></div>
+            </div>
+            <div class="ui-panel"><h3 class="ui-heading">Recent Card Activity</h3><div class="ui-small">Your latest MetaMask Card transactions</div><div class="transactions">
+              <div class="transaction"><div><div class="merchant">Coffee Shop</div><div class="ui-small">Food &amp; Dining</div></div><div class="tx-right"><strong>$25.99</strong><span class="badge">completed</span></div></div>
+              <div class="transaction"><div><div class="merchant">Gas Station</div><div class="ui-small">Transportation</div></div><div class="tx-right"><strong>$89.50</strong><span class="badge">completed</span></div></div>
+              <div class="transaction"><div><div class="merchant">Streaming Service</div><div class="ui-small">Entertainment</div></div><div class="tx-right"><strong>$12.75</strong><span class="badge">completed</span></div></div>
+            </div></div>
+          </div>
+        </div>
+        <div class="deposit-view">
+          <div class="deposit-columns">
+            <div class="ui-panel deposit-panel"><h3 class="ui-heading"><span class="green-text">↗</span> &nbsp;Deposit USDC</h3><div class="ui-small">Stake your USDC to start earning yield</div><div class="field-label">Amount (USDC)</div><div class="amount-field" id="amount-field"><span class="placeholder" id="amount-placeholder">0.00</span><span class="typed"><span class="digit">2</span><span class="digit">5</span><span class="digit">0</span><span class="caret" id="amount-caret"></span></span></div><div class="available">Available: 1,000.00 USDC</div><div class="preview-tokens" id="token-preview">You will receive: <strong>250.0000 vault tokens</strong></div></div>
+            <div class="ui-panel withdraw-panel"><h3 class="ui-heading">↙ &nbsp;Withdraw</h3><div class="ui-small">Redeem your vault tokens for USDC</div><div class="field-label">Shares to Redeem</div><div class="amount-field"><span class="ui-small">0.00</span></div><div class="available">Available: 0.0000 shares</div><div class="withdraw-button">Withdraw</div></div>
+          </div>
+          <div class="deposit-button" id="deposit-button"><span id="deposit-label">Deposit</span><span class="approve-label" id="approve-label">Approve 250 USDC</span></div>
+          <div class="ui-panel vault-info"><h3 class="ui-heading">Vault Information</h3><div class="vault-fields"><div><span class="ui-small">Share Price</span><strong>$1.000000</strong></div><div><span class="ui-small">Performance Fee</span><strong>2.00%</strong></div><div><span class="ui-small">Management Fee</span><strong>0.50%</strong></div></div></div>
+        </div>
+      </div></div>
+      <div class="scroll-track"><div class="scroll-thumb" id="scroll-thumb"></div></div>
+    </div>
+    <div class="walkthrough-note"><span>UI walkthrough · illustrative balances</span><span>cardfi-eta.vercel.app</span></div>
+    <!-- Cursor geometry adapted from the Hyperframes simulated-cursor primitive. -->
+    <div class="hf-simulated-cursor" id="cursor" aria-hidden="true"><div class="hf-simulated-cursor-pulse" id="click-pulse"></div><svg viewBox="0 0 24 24"><path d="M3 2.8 20.6 14 12.8 15.5 9 22 3 2.8Z" fill="white" stroke="#17241b" stroke-width="1.4"/></svg></div>
+  </section>
+  <section id="scene-outro" class="clip" data-start="19" data-duration="3" data-track-index="5"><div class="stage close" id="outro"><div class="eyebrow">CardFi Yield Manager</div><h2>Spend normally.<br><em>Let USDC do more.</em></h2><div class="wordmark">CARDFI</div><div class="url">cardfi-eta.vercel.app</div></div></section>
+  <audio id="music" data-start="0" data-duration="22" data-track-index="10" data-volume="0.28" data-automation="{&quot;version&quot;:1,&quot;lanes&quot;:[{&quot;target&quot;:&quot;volume&quot;,&quot;points&quot;:[{&quot;t&quot;:0,&quot;v&quot;:0.28},{&quot;t&quot;:20.5,&quot;v&quot;:0.28},{&quot;t&quot;:22,&quot;v&quot;:0}]}]}" src="assets/music/happy-beats-business-moves-vol-12-by-ende-dot-app.mp3"></audio>
+  <audio id="sfx-reveal" data-start="3.27" data-duration="0.18" data-track-index="11" data-volume="0.32" src="assets/sfx/impactSoft_medium_001.ogg"></audio>
+  <audio id="sfx-focus" data-start="14.73" data-duration="0.06" data-track-index="12" data-volume="0.40" src="assets/sfx/click2.ogg"></audio>
+</div>
+<script>
+  const tl = gsap.timeline({ paused:true });
+  tl.from('#hook .eyebrow', { opacity:0, y:18, duration:.45, ease:'power2.out' }, .25).from('#hook h1', { opacity:0, y:48, duration:.7, ease:'power3.out' }, .45).from('#hook .lede, #hook .pill', { opacity:0, y:22, duration:.5, stagger:.12, ease:'power2.out' }, .8).from('#payment-card', { opacity:0, x:120, rotation:8, duration:.75, ease:'power3.out' }, .55);
+  tl.from('#product-frame', { opacity:0, y:52, scale:.96, duration:.8, ease:'power3.out' }, 3.05)
+    .from('.chapter-bar, .walkthrough-note', { opacity:0, duration:.45 }, 3.35)
+    .set('#chapter-overview', { color:'#82ecb2' }, 3)
+    .to('#product-page', { y:-730, duration:1, ease:'power3.inOut' }, 7.6)
+    .set('.overview', { opacity:0 }, 8.6)
+    .to('#scroll-thumb', { y:242, duration:1, ease:'power3.inOut' }, 7.6)
+    .to('#chapter-overview', { color:'#a7b0aa', duration:.3 }, 7.6)
+    .to('#chapter-activity', { color:'#82ecb2', duration:.3 }, 7.6);
+  // beat-locked: category bars begin drawing on the 8.74s cue.
+  tl.from('.bar-fill', { scaleX:0, duration:.8, stagger:.12, ease:'power2.out' }, 8.74)
+    .to('#product-page', { y:-1460, duration:1.05, ease:'power3.inOut' }, 12.7)
+    .set('.activity-view', { opacity:0 }, 13.75)
+    .to('#scroll-thumb', { y:484, duration:1.05, ease:'power3.inOut' }, 12.7)
+    .to('#chapter-activity', { color:'#a7b0aa', duration:.3 }, 12.7)
+    .to('#chapter-deposit', { color:'#82ecb2', duration:.3 }, 12.7)
+    .fromTo('#cursor', { opacity:0, x:1140, y:838 }, { opacity:1, x:425, y:480, duration:.8, ease:'power2.inOut' }, 13.85)
+    .fromTo('#click-pulse', { opacity:.75, scale:.4 }, { opacity:0, scale:1.9, duration:.4, ease:'power2.out' }, 14.73)
+    .to('#amount-field', { borderColor:'#8adcb0', duration:.18 }, 14.73)
+    .set('#amount-placeholder', { opacity:0 }, 14.98)
+    .from('.digit', { opacity:0, duration:.01, stagger:.17 }, 15)
+    .from('#amount-caret', { opacity:0, duration:.01 }, 14.98)
+    .from('#token-preview', { opacity:0, y:5, duration:.3, ease:'power2.out' }, 15.55)
+    .set('#deposit-label', { opacity:0 }, 15.55)
+    .from('#approve-label', { opacity:0, duration:.2 }, 15.55)
+    .to('#cursor', { x:825, y:676, duration:.65, ease:'power2.inOut' }, 16.15)
+    .to('#deposit-button', { backgroundColor:'#d8f5e4', duration:.25 }, 16.8)
+    .to('#cursor', { opacity:0, duration:.3 }, 18.4)
+    .to('#product-frame, .chapter-bar, .walkthrough-note', { opacity:0, y:-12, duration:.25, ease:'power2.in' }, 18.75);
+  tl.from('#outro .eyebrow, #outro h2, #outro .wordmark, #outro .url', { opacity:0, y:28, duration:.46, stagger:.13, ease:'power3.out' }, 19.2);
+  tl.to('.ambient.one', { x:45, y:-24, duration:21, ease:'none' }, 0).to('.ambient.two', { x:-35, y:35, duration:21, ease:'none' }, 0);
+  window.__timelines['cardfi-brag'] = tl;
+</script>
 </body>
 </html>

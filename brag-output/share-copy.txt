@@ -1,1 +1,1 @@
-CardFi turns MetaMask Card activity into smarter USDC yield management — with automated rebalancing, multichain access, and a dashboard that keeps the loop visible.
+CardFi brings MetaMask Card activity, spending insights, and USDC vault controls into one dashboard. A look at the product, from card rewards to the deposit workflow.
