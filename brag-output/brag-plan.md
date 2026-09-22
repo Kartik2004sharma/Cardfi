@@ -56,22 +56,22 @@ Sequential/interaction: yes — card enters, then yield badge settles.
 Audio intent: clean opening pulse.
 Transition mood: soft cut → Scene 2
 
-### Scene 2 — Automated routing — 4.5s
-MetaMask Card → Yield Manager → USDC flows to Aave V3 and Circle/LI.FI.
-Sequential/interaction: yes — route nodes illuminate in order.
-Audio intent: steady, assured forward motion.
+### Scene 2 — Product overview — 5s
+The actual CardFi dashboard fills the frame with its MetaMask integration and USDC/yield metrics.
+Sequential/interaction: yes — dashboard settles, then the readiness status appears.
+Audio intent: product proof over explanation.
 Transition mood: soft cut → Scene 3
 
-### Scene 3 — The actual dashboard — 6s
-The real CardFi dashboard image enters inside a dimensional frame; cards call out MetaMask integration, card activity, and yield status.
-Sequential/interaction: yes — three status tags settle one at a time.
+### Scene 3 — Card-linked activity — 5.5s
+A large, cropped real dashboard view holds on enhanced MetaMask integration, card activity, rewards, and APY.
+Sequential/interaction: yes — activity callout settles over the relevant product area.
 Audio intent: product proof, strongest cue at 8.74s.
 Transition mood: slide → Scene 4
 
-### Scene 4 — What runs underneath — 4.5s
-Three readable feature chips: Smart rebalancing, Multichain USDC, Circle wallet custody.
-Sequential/interaction: yes — one chip per beat with a final hold.
-Audio intent: concise proof points on the 13.11–14.73s window.
+### Scene 4 — USDC management — 5.5s
+A second large product crop holds on the vault and USDC-management surface, with a Deposit USDC callout.
+Sequential/interaction: yes — deposit callout enters over the product UI.
+Audio intent: concise product interaction proof on the 13.11–14.73s window.
 Transition mood: soft cut → Scene 5
 
 ### Scene 5 — Close — 3s
